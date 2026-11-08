@@ -69,6 +69,8 @@ body,button,input,select,textarea{font-family:var(--body)}
 .timeline-heading,.job h3,.detail-dialog h2,.gallery-header h2{text-align:center}
 .job small{font-size:11px;letter-spacing:.03em}
 .job strong{font-size:13px}
+.role-duties{margin:12px 0 0;padding-left:20px;color:var(--muted);font-size:14px;line-height:1.65}
+.role-duties li+li{margin-top:12px}
 footer{text-align:center}
 footer h2{font-size:clamp(36px,5vw,72px)}
 .contact-intro{margin-inline:auto}
