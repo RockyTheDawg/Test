@@ -71,6 +71,21 @@ const gallery = [...document.querySelectorAll('.tile img')];
 const galleryPage = document.querySelector('#gallery-page');
 const lightbox = document.querySelector('#lightbox');
 const full = document.querySelector('#full');
+// Include the original cover alongside the existing gallery; avoid a repeat on return.
+const galleryCover = document.querySelector('#gallery-cover');
+const coverPool = [{src: galleryCover.getAttribute('src'), alt: galleryCover.alt},
+  ...gallery.map(image => ({src: image.getAttribute('src'), alt: image.alt}))];
+let lastCover = '';
+function randomizeGalleryCover() {
+  try { lastCover = sessionStorage.getItem('test-gallery-cover') || lastCover; } catch {}
+  const choices = coverPool.filter(photo => photo.src !== lastCover);
+  const photo = choices[Math.floor(Math.random() * choices.length)];
+  galleryCover.src = photo.src;
+  galleryCover.alt = photo.alt;
+  lastCover = photo.src;
+  try { sessionStorage.setItem('test-gallery-cover', photo.src); } catch {}
+}
+window.addEventListener('pageshow', randomizeGalleryCover);
 let active = 0;
 function selectPhoto(index) {
   active = (index + gallery.length) % gallery.length;
@@ -155,7 +170,18 @@ async function selectMusic() {
     ["Apple Music", "https://music.apple.com/us/search?term=" + encodeURIComponent(song.title + " " + song.artist)]
   ]) {
     const link = document.createElement("a");
-    link.textContent = label;
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('class', 'service-icon');
+    icon.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    if (label === 'Spotify') {
+      path.setAttribute('d', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM6 8.5c4-1.3 8-1 12 1M7 12c3-1 6.5-.7 9.5 1M8 15.5c2.3-.6 4.8-.4 7 .7');
+    } else {
+      path.setAttribute('d', 'M9 17V6l11-3v11M9 9l11-3M9 17c0 1.7-2 3-4 3s-3-1-3-2 2-3 4-3 3 1 3 2Zm11-3c0 1.7-2 3-4 3s-3-1-3-2 2-3 4-3 3 1 3 2Z');
+    }
+    icon.append(path);
+    link.append(icon, document.createTextNode(label));
     link.href = url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
@@ -205,15 +231,25 @@ document.querySelector('#copy-email').addEventListener('click', async () => {
 });
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-if ('IntersectionObserver' in window && !reducedMotion.matches) {
-  const observer = new IntersectionObserver(entries => {
+const revealItems = [...document.querySelectorAll('.hero-copy, .terminal-wrap, .section-heading, .project-card, .about-grid, .job, .music-panel, footer')];
+let revealObserver;
+function startReveals() {
+  revealObserver?.disconnect();
+  revealItems.forEach(element => element.classList.remove('reveal', 'revealed'));
+  if (!('IntersectionObserver' in window) || reducedMotion.matches) return;
+  revealItems.forEach(element => element.classList.add('reveal'));
+  revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add('reveal');
-      observer.unobserve(entry.target);
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
     });
-  }, {threshold:0.08});
-  document.querySelectorAll('.section-heading, .project-card, .about-grid, .skill-card, .job, .music-panel, .contact-card')
-    .forEach(element => observer.observe(element));
+  }, {threshold:0, rootMargin:'0px 0px -12px 0px'});
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    revealItems.forEach(element => revealObserver.observe(element));
+  }));
 }
+startReveals();
+window.addEventListener('pageshow', event => { if (event.persisted) startReveals(); });
+reducedMotion.addEventListener('change', startReveals);
 
