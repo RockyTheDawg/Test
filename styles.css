@@ -85,9 +85,27 @@ footer .actions,.footer-bottom{justify-content:center}
 .music-links a{display:inline-flex;align-items:center;gap:8px}
 .roblox-icon{width:18px;height:18px;background:currentColor;transform:rotate(15deg);display:inline-grid;place-items:center;flex-shrink:0}
 .roblox-icon::after{content:'';width:6px;height:6px;background:white}
-.reveal{animation:none;opacity:0;transition:opacity 1.6s ease}
-.reveal.revealed,.reveal:focus-within{opacity:1}
+.reveal{animation:reveal .7s cubic-bezier(.16,1,.3,1) both;opacity:1;transition:none}
 @media(max-width:1023px){.hero-grid{grid-template-columns:1fr;gap:40px}.hero-copy{max-width:none}.terminal-wrap{max-width:680px;width:100%;justify-self:center}.hero h1{font-size:48px}}
 @media(max-width:767px){.nav-row,.site-header.nav-ready .nav-row{display:grid;grid-template-columns:1fr auto;min-height:72px;padding-block:12px;gap:12px}.brand{font-size:18px}.nav-actions{grid-column:2;grid-row:1}.nav-ready #site-nav{position:static;grid-column:1/-1;justify-self:stretch;padding:0;border:0}.nav-ready.menu-open #site-nav a{font-size:16px;border:0;padding:12px}.site-header:not(.nav-ready) #site-nav{grid-column:1/-1;justify-self:center}.hero{padding-top:28px}.hero-grid{padding-bottom:56px}.terminal{box-shadow:8px 8px 0 var(--accent)}.hero h1{font-size:40px}.hero-description{font-size:16px}.contact-grid{grid-template-columns:1fr}.contact-card strong{font-size:13px}.project-grid{gap:36px}}
 @media(max-width:479px){.hero h1{font-size:36px}.terminal{padding:18px}.terminal-top h2{font-size:21px}.terminal-item{padding:12px;gap:10px}.terminal-item>span{font-size:18px;width:22px}.terminal-item h3{font-size:14px}.terminal-item p{font-size:12px}.section-heading h2{font-size:34px}.about-grid h2{font-size:30px}.hobbies-list li{font-size:16px}.contact-card strong{font-size:12px}.footer-bottom{font-size:12px}.terminal-status{font-size:10px}}
 @media(prefers-reduced-motion:reduce),print{.reveal{opacity:1;transition:none}}
+
+/* Photo captions and centered music/contact details. */
+.terminal-status{justify-content:center;flex-wrap:wrap;text-align:center}
+.about-photo img,.about-photo:hover img{filter:none}
+.about-photo figcaption{position:relative;right:auto;bottom:auto;display:block;margin:20px auto 0;max-width:100%;width:fit-content;text-align:center;text-transform:none;letter-spacing:normal;font-size:13px;line-height:1.5}
+.tile{aspect-ratio:auto;display:flex;flex-direction:column}
+.tile img{aspect-ratio:1;height:auto;object-fit:cover}
+.tile-caption{display:block;width:100%;padding:10px 8px;font-size:12px;line-height:1.5;text-align:center;background:#fff;color:var(--ink)}
+.photo-location{text-align:center;font-size:14px;line-height:1.5;margin-top:12px}
+#full{height:calc(100dvh - 235px)}
+.music-panel{margin-inline:auto;text-align:center}
+.music-label{justify-content:center}
+#track{display:flex;flex-direction:column;align-items:center;gap:24px;margin-bottom:0;text-align:center}
+.music-artwork{width:200px;height:200px;flex-shrink:0}
+#track>div:last-child{order:1;width:100%;min-width:0}
+.music-links{order:2;justify-content:center}
+#track audio{margin-inline:auto}
+.contact-card strong{overflow-wrap:anywhere}
+#hallway-details .detail-logo{margin-inline:auto}

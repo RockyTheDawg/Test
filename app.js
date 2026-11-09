@@ -91,6 +91,7 @@ function selectPhoto(index) {
   active = (index + gallery.length) % gallery.length;
   full.src = gallery[active].src;
   full.alt = gallery[active].alt;
+  document.querySelector('#photo-location').textContent = gallery[active].closest('.tile').dataset.location || '';
   document.querySelector('#count').textContent = (active + 1) + ' of ' + gallery.length;
 }
 document.querySelector('#gallery-open').addEventListener('click', () => openDialog(galleryPage));
@@ -204,50 +205,35 @@ function loadMusic() {
   musicUpdatedAt = Date.now();
   const track = document.querySelector('#track');
   track.setAttribute('aria-busy', 'true');
-  selectMusic().catch(() => { track.textContent = 'Music is temporarily unavailable. Try another track.'; })
+  selectMusic().catch(() => { track.textContent = 'Music is temporarily unavailable. Please refresh to try again.'; })
     .finally(() => track.setAttribute('aria-busy', 'false'));
 }
 loadMusic();
 function refreshMusic() {
-  if (document.hidden || Date.now() - musicUpdatedAt < 60000) return;
+  if (document.hidden || Date.now() - musicUpdatedAt < 60 * 60 * 1000) return;
   const audio = document.querySelector('#track audio');
   if (audio && !audio.paused && !audio.ended) return;
   loadMusic();
 }
-setInterval(refreshMusic, 1000);
+setInterval(refreshMusic, 60000);
 document.addEventListener('visibilitychange', refreshMusic);
 
 
-document.querySelector('#next-song').addEventListener('click', loadMusic);
-
-document.querySelector('#copy-email').addEventListener('click', async () => {
-  const status = document.querySelector('#copy-status');
-  try {
-    await navigator.clipboard.writeText('mrdiegog2405@gmail.com');
-    status.textContent = 'Email copied.';
-  } catch {
-    status.textContent = 'Email: mrdiegog2405@gmail.com';
-  }
-});
-
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const revealItems = [...document.querySelectorAll('.hero-copy, .terminal-wrap, .section-heading, .project-card, .about-grid, .job, .music-panel, footer')];
+const revealItems = [...document.querySelectorAll('.section-heading, .project-card, .about-grid, .job, .music-panel, .contact-card')];
 let revealObserver;
 function startReveals() {
   revealObserver?.disconnect();
-  revealItems.forEach(element => element.classList.remove('reveal', 'revealed'));
+  revealItems.forEach(element => element.classList.remove('reveal'));
   if (!('IntersectionObserver' in window) || reducedMotion.matches) return;
-  revealItems.forEach(element => element.classList.add('reveal'));
   revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add('revealed');
+      entry.target.classList.add('reveal');
       revealObserver.unobserve(entry.target);
     });
-  }, {threshold:0, rootMargin:'0px 0px -12px 0px'});
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    revealItems.forEach(element => revealObserver.observe(element));
-  }));
+  }, {threshold:0.08});
+  revealItems.forEach(element => revealObserver.observe(element));
 }
 startReveals();
 window.addEventListener('pageshow', event => { if (event.persisted) startReveals(); });
