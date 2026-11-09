@@ -86,6 +86,29 @@ function randomizeGalleryCover() {
   try { sessionStorage.setItem('test-gallery-cover', photo.src); } catch {}
 }
 window.addEventListener('pageshow', randomizeGalleryCover);
+
+const hobbiesPhoto = document.querySelector('.about-photo img');
+const hobbiesCaption = document.querySelector('.about-photo figcaption');
+// Use only photos with supplied captions so the image and description always match.
+const hobbiesPool = gallery.map(image => ({
+  src: image.getAttribute('src'),
+  alt: image.alt,
+  caption: image.closest('.tile').dataset.location
+})).filter(photo => photo.caption);
+let lastHobbiesPhoto = hobbiesPhoto.getAttribute('src');
+function randomizeHobbiesPhoto() {
+  try { lastHobbiesPhoto = sessionStorage.getItem('test-hobbies-photo') || lastHobbiesPhoto; } catch {}
+  const choices = hobbiesPool.filter(photo => photo.src !== lastHobbiesPhoto);
+  if (!choices.length) return;
+  const photo = choices[Math.floor(Math.random() * choices.length)];
+  hobbiesPhoto.src = photo.src;
+  hobbiesPhoto.alt = photo.alt;
+  hobbiesCaption.textContent = photo.caption;
+  lastHobbiesPhoto = photo.src;
+  try { sessionStorage.setItem('test-hobbies-photo', photo.src); } catch {}
+}
+window.addEventListener('pageshow', randomizeHobbiesPhoto);
+
 let active = 0;
 function selectPhoto(index) {
   active = (index + gallery.length) % gallery.length;
