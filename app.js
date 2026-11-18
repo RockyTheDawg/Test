@@ -62,6 +62,11 @@ function guardInteraction(event) {
   if (event.type === 'auxclick' && event.button !== 1) return;
   const control = event.target.closest('a[href], button');
   if (!control || !actionKeys.has(control)) return;
+  if (control.closest('.dialog-closing')) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return;
+  }
   readCooldowns();
   const key = actionKeys.get(control);
   lastActionKey = key;
@@ -127,28 +132,77 @@ mobile.addEventListener('change', () => {
 });
 window.addEventListener('pageshow', () => closeMenu());
 
-// Native dialogs retain keyboard focus and restore it to the triggering control.
+// Retain the page and gallery position through native focus restoration.
 const dialogs = [...document.querySelectorAll('dialog')];
+const dialogOrigins = new Map();
+const closingDialogs = new Set();
 function updateScrollLock() {
   document.body.classList.toggle('modal-open', dialogs.some(dialog => dialog.open));
 }
 function openDialog(dialog) {
+  if (dialog.open) return;
+  const opener = document.activeElement;
+  const parent = opener?.closest('dialog');
+  dialogOrigins.set(dialog, {
+    opener, parent, parentTop: parent?.scrollTop,
+    x: window.scrollX, y: window.scrollY
+  });
   dialog.showModal();
   updateScrollLock();
 }
+function restoreDialogOrigin(dialog) {
+  const origin = dialogOrigins.get(dialog);
+  dialogOrigins.delete(dialog);
+  updateScrollLock();
+  if (!origin) return;
+  origin.opener?.focus({preventScroll: true});
+  if (origin.parent?.open) origin.parent.scrollTo({top: origin.parentTop, behavior: 'instant'});
+  window.scrollTo({left: origin.x, top: origin.y, behavior: 'instant'});
+}
+function closeDialog(dialog) {
+  if (!dialog.open || closingDialogs.has(dialog)) return;
+  closingDialogs.add(dialog);
+  const finish = () => {
+    dialog.classList.remove('dialog-closing');
+    // Disable smooth scrolling while the browser restores focus to the opener.
+    document.documentElement.classList.add('restoring-dialog');
+    dialog.close();
+    restoreDialogOrigin(dialog);
+    closingDialogs.delete(dialog);
+    requestAnimationFrame(() => document.documentElement.classList.remove('restoring-dialog'));
+  };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    finish();
+    return;
+  }
+  dialog.classList.add('dialog-closing');
+  // A fixed fallback also completes closing in background tabs or if animation is disabled.
+  const timeout = setTimeout(done, 220);
+  function done(event) {
+    if (event && (event.target !== dialog || event.animationName !== 'dialog-exit')) return;
+    clearTimeout(timeout);
+    dialog.removeEventListener('animationend', done);
+    finish();
+  }
+  dialog.addEventListener('animationend', done);
+}
 dialogs.forEach(dialog => {
-  dialog.addEventListener('close', updateScrollLock);
+  dialog.addEventListener('close', () => restoreDialogOrigin(dialog));
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    closeDialog(dialog);
+  });
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
     if (event.clientX < bounds.left || event.clientX > bounds.right ||
-        event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+        event.clientY < bounds.top || event.clientY > bounds.bottom) closeDialog(dialog);
   });
 });
 document.querySelectorAll('[data-dialog]').forEach(button =>
   button.addEventListener('click', () => openDialog(document.getElementById(button.dataset.dialog))));
 document.querySelectorAll('[data-close]').forEach(button =>
-  button.addEventListener('click', () => button.closest('dialog').close()));
+  button.addEventListener('click', () => closeDialog(button.closest('dialog'))));
 
 const gallery = [...document.querySelectorAll('.tile img')];
 const galleryPage = document.querySelector('#gallery-page');
@@ -201,14 +255,14 @@ function selectPhoto(index) {
   document.querySelector('#count').textContent = (active + 1) + ' of ' + gallery.length;
 }
 document.querySelector('#gallery-open').addEventListener('click', () => openDialog(galleryPage));
-document.querySelector('#gallery-back').addEventListener('click', () => galleryPage.close());
+document.querySelector('#gallery-back').addEventListener('click', () => closeDialog(galleryPage));
 gallery.forEach((image, index) => image.closest('button').addEventListener('click', () => {
   selectPhoto(index);
   openDialog(lightbox);
 }));
 document.querySelector('#prev').addEventListener('click', () => selectPhoto(active - 1));
 document.querySelector('#next').addEventListener('click', () => selectPhoto(active + 1));
-document.querySelector('#close').addEventListener('click', () => lightbox.close());
+document.querySelector('#close').addEventListener('click', () => closeDialog(lightbox));
 lightbox.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();

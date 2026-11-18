@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Nabla&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="start.js"></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -111,20 +112,19 @@
     <section class="section bordered" id="hobbies" aria-labelledby="hobbies-title"><div class="container">
 
       <div class="about-grid">
-        <figure class="about-photo"><img src="assets/photos/rock-window.jpg" alt="A desert landscape framed by the textured opening of a rock formation" width="720" height="900" loading="lazy"><figcaption>Hole in the Rock — Papago Park, Phoenix, AZ</figcaption></figure>
+        <figure class="about-photo"><div class="hobbies-image-frame"><img src="assets/photos/rock-window.jpg" alt="A desert landscape framed by the textured opening of a rock formation" width="720" height="900" loading="lazy"></div><figcaption>Hole in the Rock — Papago Park, Phoenix, AZ</figcaption></figure>
         <div><h2 id="hobbies-title">Hobbies I enjoy doing</h2><ul class="hobbies-list"><li>Gaming</li><li>Photography</li><li>Cooking</li><li>Traveling</li></ul>
           <div class="facts"><div><strong>CS</strong><span>Shippensburg University</span></div><div><strong>2030</strong><span>Expected graduation</span></div><div class="centered-fact"><strong>PA</strong><span>Home base</span></div><div class="centered-fact"><strong>Eagle</strong><span>Scout</span></div></div>
         </div>
       </div>
     </div></section>
     <section class="section bordered" id="resume" aria-labelledby="resume-title"><div class="container">
-      <div class="section-heading"><div><p class="eyebrow">Resume</p><h2 id="resume-title">My journey<br><span class="outline">so far.</span></h2></div><a class="button" href="media/diego-gomez-resume.pdf" download="Diego Gomez Resume.pdf">Download resume <span aria-hidden="true">↓</span></a></div>
+      <div class="section-heading"><div><p class="eyebrow">Resume</p><h2 id="resume-title">My journey<br><span class="outline">so far.</span></h2></div><a class="button" href="media/diego-gomez-resume.pdf" download="Diego Gomez Resume.pdf">Download resume</a></div>
       <h3 class="timeline-heading">Experience</h3><div class="timeline"><article class="job">
       <div>
        <small>
         SEP 2026 — PRESENT
        </small>
-       <div>3 months</div>
        <div>Shippensburg, Pennsylvania, United States</div>
       </div>
       <div>
@@ -149,7 +149,6 @@
        <small>
         JAN 2026 — PRESENT
        </small>
-       <div>11 months</div>
        <div>United States</div>
       </div>
       <div>
@@ -177,7 +176,6 @@
        <small>
         JUL 2026 — AUG 2026
        </small>
-       <div>2 months</div>
        <div>Dillsburg, Pennsylvania, United States</div>
       </div>
       <div>
@@ -202,7 +200,6 @@
        <small>
         SEP 2025 — JAN 2026
        </small>
-       <div>5 months</div>
        <div>Phoenix, Arizona, United States</div>
       </div>
       <div>
@@ -227,7 +224,6 @@
        <small>
         JUL 2024 — AUG 2025
        </small>
-       <div>1 year 2 months</div>
        <div>New Oxford, Pennsylvania, United States</div>
       </div>
       <div>
@@ -261,6 +257,7 @@
       <div>
        <h3>Computer Science</h3>
        Grand Canyon University
+       <p class="job-location">Phoenix, Arizona</p>
       </div>
      </article><article class="job">
       <small>
@@ -391,17 +388,17 @@
      <img alt="DEN — Denver, CO — Photograph 27 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/038.webp" width="320"/>
      <span class="tile-caption">DEN — Denver, CO</span>
     </button>
-    <button aria-label="Enlarge photograph 28" class="tile" data-location="Overview of Downtown Phoenix">
-     <img alt="Overview of Downtown Phoenix — Photograph 28 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/040.webp" width="320"/>
-     <span class="tile-caption">Overview of Downtown Phoenix</span>
+    <button aria-label="Enlarge photograph 28" class="tile" data-location="Sunset over Downtown Phoenix">
+     <img alt="Sunset over Downtown Phoenix — Photograph 28 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/040.webp" width="320"/>
+     <span class="tile-caption">Sunset over Downtown Phoenix</span>
     </button>
-    <button aria-label="Enlarge photograph 29" class="tile" data-location="Charlotte, NC">
-     <img alt="Charlotte, NC — Photograph 29 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/041.webp" width="320"/>
-     <span class="tile-caption">Charlotte, NC</span>
+    <button aria-label="Enlarge photograph 29" class="tile" data-location="CLT- Charlotte, NC">
+     <img alt="CLT- Charlotte, NC — Photograph 29 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/041.webp" width="320"/>
+     <span class="tile-caption">CLT- Charlotte, NC</span>
     </button>
-    <button aria-label="Enlarge photograph 30" class="tile" data-location="Charlotte, NC">
-     <img alt="Charlotte, NC — Photograph 30 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/042.webp" width="320"/>
-     <span class="tile-caption">Charlotte, NC</span>
+    <button aria-label="Enlarge photograph 30" class="tile" data-location="CLT- Charlotte, NC">
+     <img alt="CLT- Charlotte, NC — Photograph 30 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/042.webp" width="320"/>
+     <span class="tile-caption">CLT- Charlotte, NC</span>
     </button>
     <button aria-label="Enlarge photograph 31" class="tile" data-location="DCA — Arlington, VA">
      <img alt="DCA — Arlington, VA — Photograph 31 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/044.webp" width="320"/>
@@ -411,8 +408,9 @@
      <img alt="DCA — Arlington, VA — Photograph 32 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/045.webp" width="320"/>
      <span class="tile-caption">DCA — Arlington, VA</span>
     </button>
-    <button aria-label="Enlarge photograph 33" class="tile">
-     <img alt="Photograph 33 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/046.webp" width="320"/>
+    <button aria-label="Enlarge photograph 33" class="tile" data-location="PHX- Phoenix, AZ">
+     <img alt="PHX- Phoenix, AZ — Photograph 33 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/046.webp" width="320"/>
+     <span class="tile-caption">PHX- Phoenix, AZ</span>
     </button>
     <button aria-label="Enlarge photograph 34" class="tile" data-location="Arizona">
      <img alt="Arizona — Photograph 34 by Diego Gomez" height="320" loading="lazy" src="assets/gallery/049.webp" width="320"/>

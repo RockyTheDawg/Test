@@ -132,3 +132,27 @@ p, li, small, figcaption, .role-duties, .facts span, .job small, .job strong, .c
 .hallway-art{border-color:transparent}
 /* Include the marker border in its width so its center sits on the timeline. */
 .job::before{box-sizing:border-box}
+
+/* Start gently at the opening section; reserve scrollbar space across dialogs. */
+html{scrollbar-gutter:stable}
+html.restoring-dialog,html.restoring-dialog *{scroll-behavior:auto!important}
+.landing-enter .hero-grid{animation:landing-enter .65s ease-out both}
+@keyframes landing-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+dialog[open]{animation:dialog-enter .18s ease-out both}
+dialog[open]::backdrop{animation:backdrop-enter .18s ease-out both}
+dialog.dialog-closing{animation:dialog-exit .18s ease-in both}
+dialog.dialog-closing::backdrop{animation:backdrop-exit .18s ease-in both}
+@keyframes dialog-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes dialog-exit{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px)}}
+@keyframes backdrop-enter{from{opacity:0}to{opacity:1}}
+@keyframes backdrop-exit{from{opacity:1}to{opacity:0}}
+#resume [download]{align-self:center;text-align:center}
+
+/* Fit the photo and caption to the hobbies column without offset frames. */
+#hobbies .about-grid{align-items:stretch}
+#hobbies .about-photo{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:16px;width:100%;max-width:none;margin:0;min-width:0}
+#hobbies .about-photo::before{display:none}
+.hobbies-image-frame{position:relative;min-height:0;border:2px solid var(--ink);overflow:hidden}
+#hobbies .about-photo img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;border:0;box-shadow:none}
+#hobbies .about-photo figcaption{width:100%;margin:0;box-shadow:none;box-sizing:border-box}
+@media(max-width:1023px){.hobbies-image-frame{aspect-ratio:4/3}#hobbies .about-photo{grid-template-rows:auto auto}}
