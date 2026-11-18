@@ -109,3 +109,12 @@ footer .actions,.footer-bottom{justify-content:center}
 #track audio{margin-inline:auto}
 .contact-card strong{overflow-wrap:anywhere}
 #hallway-details .detail-logo{margin-inline:auto}
+
+/* Test-site polish: consistent art frames, centered facts, and native icons. */
+.hallway-art { border:2px solid var(--ink); }
+.facts > .centered-fact { justify-content:center; align-items:center; text-align:center; }
+.terminal-item > .native-emoji { font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; font-size:28px; line-height:1; flex-shrink:0; }
+.terminal-item > .scout-icon { display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.scout-icon img { width:32px; height:32px; object-fit:contain; }
+body { color:#000; font-weight:400; }
+p, li, small, figcaption, .role-duties, .facts span, .job small, .job strong, .contact-intro, .footer-bottom, .tile-caption, .music-label, .terminal-status { color:#000; font-weight:400; }
