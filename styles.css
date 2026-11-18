@@ -118,3 +118,17 @@ footer .actions,.footer-bottom{justify-content:center}
 .scout-icon img { width:32px; height:32px; object-fit:contain; }
 body { color:#000; font-weight:400; }
 p, li, small, figcaption, .role-duties, .facts span, .job small, .job strong, .contact-intro, .footer-bottom, .tile-caption, .music-label, .terminal-status { color:#000; font-weight:400; }
+
+/* Center the existing timeline without changing its cards or descriptions. */
+#resume .timeline{max-width:820px;margin-inline:auto}
+#resume .job{max-width:none}
+
+/* Keep focus available while showing that a repeat action is cooling down. */
+.cooldown-active{cursor:wait;opacity:.55}
+.cooldown-status{position:fixed;inset:auto 16px 16px;margin-inline:auto;width:fit-content;max-width:calc(100% - 32px);padding:10px 16px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);box-shadow:0 3px 16px #0002;font:500 13px/1.5 var(--body);text-align:center;z-index:250;pointer-events:none}
+@media print{.cooldown-status{display:none}}
+
+/* Remove only the inner Hallway U frame; retain its card and image layout. */
+.hallway-art{border-color:transparent}
+/* Include the marker border in its width so its center sits on the timeline. */
+.job::before{box-sizing:border-box}
