@@ -1,5 +1,88 @@
 'use strict';
 
+// A separate five-second cooldown for each action; duplicate links share a timer.
+// Persist deadlines so refreshing or opening another tab cannot reset a download.
+const cooldownMs = 5000;
+const cooldownStorageKey = 'test-site-action-cooldowns-v1';
+const cooldowns = new Map();
+const controls = [...document.querySelectorAll('a[href], button')];
+const originalTitles = new Map(controls.map(control => [control, control.getAttribute('title')]));
+const actionKeys = new Map(controls.map((control, index) => [control,
+  control.id === 'prev' || control.id === 'next' ? 'gallery-navigation' :
+  control.getAttribute('href') || control.id || `control-${index}`]));
+const cooldownStatuses = [document.body, ...document.querySelectorAll('dialog')].map(parent => {
+  const status = document.createElement('p');
+  status.className = 'cooldown-status';
+  status.setAttribute('role', 'status');
+  status.hidden = true;
+  parent.append(status);
+  return status;
+});
+let cooldownTimer;
+let lastActionKey;
+function readCooldowns() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(cooldownStorageKey) || '{}');
+    for (const [key, deadline] of Object.entries(saved)) {
+      if (Number.isFinite(deadline) && deadline > Date.now() && deadline <= Date.now() + cooldownMs) {
+        cooldowns.set(key, Math.max(deadline, cooldowns.get(key) || 0));
+      }
+    }
+  } catch { /* Continue with in-memory timers when storage is unavailable. */ }
+}
+function refreshCooldowns() {
+  const now = Date.now();
+  for (const [key, deadline] of cooldowns) if (deadline <= now) cooldowns.delete(key);
+  for (const control of controls) {
+    const remaining = Math.ceil(((cooldowns.get(actionKeys.get(control)) || 0) - now) / 1000);
+    control.classList.toggle('cooldown-active', remaining > 0);
+    if (remaining > 0) {
+      control.setAttribute('aria-disabled', 'true');
+      control.title = `Ready again in ${remaining}s`;
+    } else {
+      control.removeAttribute('aria-disabled');
+      const title = originalTitles.get(control);
+      if (title === null) control.removeAttribute('title');
+      else control.title = title;
+    }
+  }
+  const seconds = Math.ceil(((cooldowns.get(lastActionKey) || 0) - now) / 1000);
+  for (const status of cooldownStatuses) {
+    status.hidden = seconds <= 0;
+    const text = seconds > 0 ? `You can use this action again in ${seconds}s.` : '';
+    if (status.textContent !== text) status.textContent = text;
+  }
+  if (cooldowns.size && !cooldownTimer) cooldownTimer = setInterval(refreshCooldowns, 100);
+  if (!cooldowns.size) {
+    clearInterval(cooldownTimer);
+    cooldownTimer = null;
+  }
+}
+function guardInteraction(event) {
+  if (event.type === 'auxclick' && event.button !== 1) return;
+  const control = event.target.closest('a[href], button');
+  if (!control || !actionKeys.has(control)) return;
+  readCooldowns();
+  const key = actionKeys.get(control);
+  lastActionKey = key;
+  if ((cooldowns.get(key) || 0) > Date.now()) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  } else {
+    cooldowns.set(key, Date.now() + cooldownMs);
+    try { localStorage.setItem(cooldownStorageKey, JSON.stringify(Object.fromEntries(cooldowns))); } catch {}
+  }
+  refreshCooldowns();
+}
+document.addEventListener('click', guardInteraction, true);
+document.addEventListener('auxclick', guardInteraction, true);
+window.addEventListener('storage', event => {
+  if (event.key === cooldownStorageKey) { readCooldowns(); refreshCooldowns(); }
+});
+window.addEventListener('pageshow', () => { readCooldowns(); refreshCooldowns(); });
+readCooldowns();
+refreshCooldowns();
+
 const header = document.querySelector('.site-header');
 const menu = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#site-nav');
@@ -129,7 +212,7 @@ document.querySelector('#close').addEventListener('click', () => lightbox.close(
 lightbox.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
-    selectPhoto(active + (event.key === 'ArrowRight' ? 1 : -1));
+    document.querySelector(event.key === 'ArrowRight' ? '#next' : '#prev').click();
   }
 });
 let touchStart = null;
@@ -139,7 +222,7 @@ full.addEventListener('touchstart', event => {
 full.addEventListener('touchend', event => {
   if (touchStart === null) return;
   const distance = event.changedTouches[0].clientX - touchStart;
-  if (Math.abs(distance) > 60) selectPhoto(active + (distance < 0 ? 1 : -1));
+  if (Math.abs(distance) > 60) document.querySelector(distance < 0 ? '#next' : '#prev').click();
   touchStart = null;
 }, {passive:true});
 
