@@ -1,6 +1,0 @@
-# Five
-Mobile-first static dating demo. Serve this directory over HTTPS (or localhost). Open index.html. GitHub Pages can serve /five/ if configured for the repository root.
-
-Five-question quiz, ranked fictional matches, 24-hour chat windows, separate simulated consent, local storage, reminder opt-in and public date venue examples. Deadlines use epoch milliseconds and display in the device time zone. Unaccepted chats are deleted on the next active timer tick or reopening; connected chats persist locally. Pending chats are stored temporarily to survive refreshes. No background push, real users, verified offers, server clock, or cross-device sync. Browser install support varies; iOS may require Add to Home Screen. No production authentication, moderation or age verification. Existing repository root is unchanged.
-
-Manual test: complete quiz, open chat, send a message, refresh and reopen, accept on both demo sides, verify saved connection. For expiration and reminder tests, adjust the demo chat expires timestamp in localStorage and reload. Verify at mobile and desktop widths. No automated browser tests performed.
